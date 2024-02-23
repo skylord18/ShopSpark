@@ -22,19 +22,22 @@ public class product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private  Integer id;
+    private String brand;
+    private String name;
     @Enumerated(EnumType.STRING)
     private Category category;
     @OneToMany(cascade = {CascadeType.DETACH , CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, targetEntity = listing.class, fetch = FetchType.EAGER)
+    @JoinColumn(name = "product_id")
     private List<listing> listings;
     @OneToMany(cascade = {CascadeType.DETACH , CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, targetEntity = feature.class, fetch = FetchType.EAGER)
+    @JoinColumn(name = "product_id")
     private List<feature> features;
-    @ManyToOne(cascade = {CascadeType.DETACH , CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, targetEntity = brand.class, fetch = FetchType.EAGER)
-    private brand brand;
 
-    public product(Category category, List<listing> listings, List<feature> features, brand brand) {
+    public product(String brand, String name, Category category, List<listing> listings, List<feature> features) {
+        this.brand = brand;
+        this.name = name;
         this.category = category;
         this.listings = listings;
         this.features = features;
-        this.brand = brand;
     }
 }

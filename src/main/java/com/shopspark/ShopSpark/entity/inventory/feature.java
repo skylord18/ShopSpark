@@ -13,8 +13,10 @@ import lombok.*;
 public class feature {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private Integer id;
     @ManyToOne(cascade = {CascadeType.DETACH , CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, targetEntity = product.class, fetch = FetchType.EAGER)
+
     private product product;
     private String property;
     private String value;

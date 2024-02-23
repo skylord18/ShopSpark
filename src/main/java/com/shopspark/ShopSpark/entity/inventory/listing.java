@@ -14,7 +14,6 @@ public class listing {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @ManyToOne(cascade = {CascadeType.DETACH,CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.EAGER)
-    //@JoinColumn(name = "product_id")
     private product product;
     @Column(name = "seller_name")
     private String sellerName;

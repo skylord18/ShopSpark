@@ -13,6 +13,7 @@ import lombok.*;
 @Getter
 @Setter
 @ToString
+@Deprecated
 public class brand {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
