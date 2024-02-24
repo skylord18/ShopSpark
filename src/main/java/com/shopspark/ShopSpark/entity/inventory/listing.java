@@ -14,7 +14,7 @@ import org.springframework.format.annotation.NumberFormat;
 @Getter
 @Setter
 @ToString
-public class listing {
+public class listing extends baseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -28,7 +28,7 @@ public class listing {
     @Column(name = "seller_name")
     private String sellerName;
     @Min(value = 10,message = "Minimum Price is 10")
-    @Max(value = 100000,message = "Minimum Price is 100000")
+    @Max(value = 1000000,message = "Minimum Price is 1000000")
     private Integer price;
     @Min(value = 1, message = "Minimum Quantity Allowed is 1")
     @Max(value = 1000, message = "Maximum Quantity Allowed is 1000")

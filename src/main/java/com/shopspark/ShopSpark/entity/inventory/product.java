@@ -13,7 +13,7 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
-public class product {
+public class product extends baseEntity{
     private enum Category {
         Electronics, Clothing, Shoes, Jewelry, Home,
         Kitchen, Books, Beauty, PersonalCare, Health,
@@ -92,4 +92,5 @@ public class product {
         this.listings = listings;
         this.features = features;
     }
+
 }

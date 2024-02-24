@@ -43,4 +43,8 @@ public class featurecontroller {
         }
         return featureservice.addfeature(feature);
     }
+    @GetMapping("productid/{productid}")
+    public ResponseEntity<List<feature>> getfeaturesbyproductid(@PathVariable("productid") Integer productid){
+        return featureservice.getfeaturesbyproductid(productid);
+    }
 }

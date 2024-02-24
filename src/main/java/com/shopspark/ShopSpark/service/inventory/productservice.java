@@ -3,10 +3,18 @@ package com.shopspark.ShopSpark.service.inventory;
 import com.shopspark.ShopSpark.entity.inventory.product;
 import com.shopspark.ShopSpark.repository.inventory.productrepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.PathVariable;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,7 +22,7 @@ import java.util.Optional;
 public class productservice {
     @Autowired
     productrepository productrepository;
-
+    @Deprecated
     public ResponseEntity<List<product>> getallproducts() {
         try{
             return new ResponseEntity<>(productrepository.findAll(), HttpStatus.OK);
@@ -35,6 +43,10 @@ public class productservice {
 
     public ResponseEntity<product> addProduct(product product) {
         try{
+            product.setCreatedAt(LocalDateTime.now());
+            product.setCreatedBy("dummy");
+            product.setUpdatedAt(LocalDateTime.now());
+            product.setUpdatedBy("dummy");
             productrepository.save(product);
             return new ResponseEntity<>(product, HttpStatus.OK);
         }catch (Exception e){
@@ -43,9 +55,31 @@ public class productservice {
         }
     }
 
-    public ResponseEntity<List<product>> getproductsbycategory(String category) {
+    public ResponseEntity<Page<List<product>>> getproductsbycategory(String category, Integer pageno) {
         try{
-            return new ResponseEntity<>(productrepository.findBycategory(category), HttpStatus.OK);
+            Pageable pageable = (Pageable) PageRequest.of(pageno,5, Sort.by("name").ascending());
+            return new ResponseEntity<>(productrepository.findBycategory(category, pageable), HttpStatus.OK);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
+    public ResponseEntity<Page<List<product>>> searchproductsbyname(String searchterm,  Integer pageno) {
+        try{
+            Pageable pageable = (Pageable) PageRequest.of(pageno,5, Sort.by("name"));
+            return new ResponseEntity<>(productrepository.findByNameContainingIgnoreCaseOrBrandContainingIgnoreCase(searchterm, searchterm, pageable), HttpStatus.OK);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    public ResponseEntity<Page<List<product>>> getalltheproducts(Integer pageno) {
+        try{
+            Pageable pageable = (Pageable) PageRequest.of(pageno,5, Sort.by("name"));
+            return new ResponseEntity<>(productrepository.getalltheproducts(pageno, pageable), HttpStatus.OK);
         }catch (Exception e){
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

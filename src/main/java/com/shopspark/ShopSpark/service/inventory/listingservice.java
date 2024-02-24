@@ -3,10 +3,15 @@ package com.shopspark.ShopSpark.service.inventory;
 import com.shopspark.ShopSpark.entity.inventory.listing;
 import com.shopspark.ShopSpark.repository.inventory.listingrepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,9 +20,11 @@ public class listingservice {
 
     @Autowired
     listingrepository listingrepository;
-    public ResponseEntity<List<listing>> getallistings() {
+    public ResponseEntity<Page<List<listing>>> getallistings(Integer pageno) {
         try{
-            return new ResponseEntity<>(listingrepository.findAll(), HttpStatus.OK);
+            Pageable pageable = (Pageable) PageRequest.of(pageno,5,
+                    Sort.by("price").ascending().and(Sort.by("avl_qty").descending()));
+            return new ResponseEntity<>(listingrepository.getallistings(pageno, pageable), HttpStatus.OK);
         }catch (Exception e){
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -36,6 +43,10 @@ public class listingservice {
 
     public ResponseEntity<listing> addlisting(listing listing) {
         try{
+            listing.setCreatedAt(LocalDateTime.now());
+            listing.setCreatedBy("dummy");
+            listing.setUpdatedAt(LocalDateTime.now());
+            listing.setUpdatedBy("dummy");
             listingrepository.save(listing);
             return new ResponseEntity<>(listing, HttpStatus.CREATED);
         }catch (Exception e){
@@ -44,18 +55,22 @@ public class listingservice {
         }
     }
 
-    public ResponseEntity<List<listing>> fetchListingsByProductId(Integer id) {
+    public ResponseEntity<Page<List<listing>>> fetchListingsByProductId(Integer id, Integer pageno) {
         try{
-            return new ResponseEntity<>(listingrepository.findByproductId(id), HttpStatus.OK);
+            Pageable pageable = (Pageable) PageRequest.of(pageno,5,
+                    Sort.by("price").ascending().and(Sort.by("avl_qty").descending()));
+            return new ResponseEntity<>(listingrepository.findByproductId(id, pageable), HttpStatus.OK);
         }catch (Exception e){
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
-    public ResponseEntity<List<listing>> fetchlistingsbysellerName(String sellerName) {
+    public ResponseEntity<Page<List<listing>>> fetchlistingsbysellerName(String sellerName, Integer pageno) {
         try{
-            return new ResponseEntity<>(listingrepository.findBySellerName(sellerName), HttpStatus.OK);
+            Pageable pageable = (Pageable) PageRequest.of(pageno,5,
+                    Sort.by("price").ascending().and(Sort.by("avl_qty").descending()));
+            return new ResponseEntity<>(listingrepository.findBySellerName(sellerName, pageable), HttpStatus.OK);
         }catch (Exception e){
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

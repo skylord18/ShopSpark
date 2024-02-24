@@ -13,7 +13,7 @@ import lombok.*;
 @Getter
 @Setter
 @ToString
-public class feature {
+public class feature extends baseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -28,7 +28,7 @@ public class feature {
     @NotNull(message = "Value Cannot be NULL")
     @NotEmpty(message = "Value Cannot be Empty")
     @NotBlank(message = "Value Cannot be Blank")
-    @Size(min = 2, max = 200, message = "Value Must be Between 2 to 200 characters.")
+    @Size(min = 1, max = 200, message = "Value Must be Between 1 to 200 characters.")
     private String value;
 
     public feature(String property, String value) {

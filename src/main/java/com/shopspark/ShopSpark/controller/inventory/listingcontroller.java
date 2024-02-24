@@ -1,5 +1,4 @@
 package com.shopspark.ShopSpark.controller.inventory;
-
 import com.shopspark.ShopSpark.entity.inventory.listing;
 import com.shopspark.ShopSpark.service.inventory.listingservice;
 import jakarta.validation.Valid;
@@ -10,10 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.data.domain.Page;
 import java.util.List;
 import java.util.Optional;
-
 import static org.hibernate.query.sqm.tree.SqmNode.log;
 
 @RestController
@@ -22,9 +20,9 @@ import static org.hibernate.query.sqm.tree.SqmNode.log;
 public class listingcontroller {
     @Autowired
     listingservice listingservice;
-    @GetMapping("getall")
-    public ResponseEntity<List<listing>> getallistings(){
-        return listingservice.getallistings();
+    @GetMapping({"getall/{pageno}", "getall/page/{pageno}"})
+    public ResponseEntity<Page<List<listing>>> getallistings(@PathVariable("pageno") Integer pageno){
+        return listingservice.getallistings(pageno);
     }
     @GetMapping("id/{id}")
     public ResponseEntity<Optional<listing>> getlistingbyid(@PathVariable("id") Integer id){
@@ -38,13 +36,13 @@ public class listingcontroller {
         }
         return listingservice.addlisting(listing);
     }
-    @GetMapping("productid/{productid}")
-    public ResponseEntity<List<listing>> fetchListingsByProductId(@PathVariable("productid") Integer productid){
-        return listingservice.fetchListingsByProductId(productid);
+    @GetMapping({"productid/{productid}/{pageno}", "productid/page/{productid}/{pageno}"})
+    public ResponseEntity<Page<List<listing>>> fetchListingsByProductId(@PathVariable("productid") Integer productid, @PathVariable("pageno") Integer pageno){
+        return listingservice.fetchListingsByProductId(productid, pageno);
     }
-    @GetMapping("seller/{sellerName}")
-    public ResponseEntity<List<listing>> fetchlistingsbyseller(@PathVariable("sellerName") String sellerName){
-        return listingservice.fetchlistingsbysellerName(sellerName);
+    @GetMapping({"seller/{sellerName}/{pageno}", "seller/page/{sellerName}/{pageno}"} )
+    public ResponseEntity<Page<List<listing>>> fetchlistingsbyseller(@PathVariable("sellerName") String sellerName, @PathVariable("pageno")Integer pageno){
+        return listingservice.fetchlistingsbysellerName(sellerName, pageno);
     }
 
 }
