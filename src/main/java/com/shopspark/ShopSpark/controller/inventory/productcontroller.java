@@ -1,6 +1,9 @@
 package com.shopspark.ShopSpark.controller.inventory;
 
+
 import com.shopspark.ShopSpark.entity.inventory.product;
+import com.shopspark.ShopSpark.exceptions.InvalidInputFormat;
+import com.shopspark.ShopSpark.exceptions.SomethingWentWrongException;
 import com.shopspark.ShopSpark.service.inventory.productservice;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -25,31 +28,37 @@ public class productcontroller {
     productservice productservice;
     @Deprecated
     @GetMapping("getall")
-    public ResponseEntity<List<product>> getallproducts(){
+    public ResponseEntity<List<product>> getallproducts() throws SomethingWentWrongException {
         return productservice.getallproducts();
     }
     @GetMapping({"getall/{pageno}", "getall/page/{pageno}"})
-    public ResponseEntity<Page<List<product>>> getalltheproducts(@PathVariable("pageno") Integer pageno){
+    public ResponseEntity<Page<List<product>>> getalltheproducts(@PathVariable("pageno") Integer pageno) throws SomethingWentWrongException {
         return productservice.getalltheproducts(pageno);
     }
     @GetMapping("id/{id}")
-    public ResponseEntity<Optional<product>> getproductbyid(@PathVariable("id") Integer id){
+    public ResponseEntity<Optional<product>> getproductbyid(@PathVariable("id") Integer id) throws SomethingWentWrongException {
         return productservice.getproductbyid(id);
     }
     @PostMapping("add")
-    public ResponseEntity<product> addProduct(@Valid @RequestBody product product, Errors errors){
+    public ResponseEntity<product> addProduct(@Valid @RequestBody product product, Errors errors) throws Exception {
         if(errors.hasErrors()){
-            for(ObjectError obj : errors.getAllErrors())log.error(obj.getDefaultMessage());
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            StringBuilder sb  = new StringBuilder("The following Error(s) Occurred:");
+            sb.append(System.getProperty("line.separator"));
+            for(ObjectError obj : errors.getAllErrors()){
+                log.error(obj.getDefaultMessage());
+                sb.append(obj.getDefaultMessage());
+                sb.append(System.getProperty("line.separator"));
+            }
+            throw new InvalidInputFormat(sb.toString());
         }
         return productservice.addProduct(product);
     }
     @GetMapping({"category/{category}/{pageno}", "category/{category}/page/{pageno}"})
-    public ResponseEntity<Page<List<product>>> getproductsbycategory(@PathVariable("category") String category, @PathVariable("pageno") Integer pageno){
+    public ResponseEntity<Page<List<product>>> getproductsbycategory(@PathVariable("category") String category, @PathVariable("pageno") Integer pageno) throws SomethingWentWrongException {
         return productservice.getproductsbycategory(category, pageno);
     }
     @GetMapping({"search/{searchterm}/page/{pageno}", "search/{searchterm}/{pageno}"})
-    public ResponseEntity<Page<List<product>>> searchproductsbyname(@PathVariable("searchterm") String searchterm,@PathVariable("pageno") Integer pageno){
+    public ResponseEntity<Page<List<product>>> searchproductsbyname(@PathVariable("searchterm") String searchterm,@PathVariable("pageno") Integer pageno) throws SomethingWentWrongException {
         return productservice.searchproductsbyname(searchterm, pageno);
     }
 }

@@ -1,6 +1,7 @@
 package com.shopspark.ShopSpark.service.inventory;
 
 import com.shopspark.ShopSpark.entity.inventory.product;
+import com.shopspark.ShopSpark.exceptions.SomethingWentWrongException;
 import com.shopspark.ShopSpark.repository.inventory.productrepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,25 +24,25 @@ public class productservice {
     @Autowired
     productrepository productrepository;
     @Deprecated
-    public ResponseEntity<List<product>> getallproducts() {
+    public ResponseEntity<List<product>> getallproducts() throws SomethingWentWrongException {
         try{
             return new ResponseEntity<>(productrepository.findAll(), HttpStatus.OK);
         }catch (Exception e){
             e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            throw new SomethingWentWrongException("Something Went Wrong. Try Again Later..");
         }
     }
 
-    public ResponseEntity<Optional<product>> getproductbyid(Integer id) {
+    public ResponseEntity<Optional<product>> getproductbyid(Integer id) throws SomethingWentWrongException {
         try{
             return new ResponseEntity<>(productrepository.findById(id), HttpStatus.OK);
         }catch (Exception e){
             e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            throw new SomethingWentWrongException("Something Went Wrong. Try Again Later..");
         }
     }
 
-    public ResponseEntity<product> addProduct(product product) {
+    public ResponseEntity<product> addProduct(product product) throws SomethingWentWrongException {
         try{
             product.setCreatedAt(LocalDateTime.now());
             product.setCreatedBy("dummy");
@@ -51,38 +52,38 @@ public class productservice {
             return new ResponseEntity<>(product, HttpStatus.OK);
         }catch (Exception e){
             e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            throw new SomethingWentWrongException("Something Went Wrong. Try Again Later..");
         }
     }
 
-    public ResponseEntity<Page<List<product>>> getproductsbycategory(String category, Integer pageno) {
+    public ResponseEntity<Page<List<product>>> getproductsbycategory(String category, Integer pageno) throws SomethingWentWrongException {
         try{
             Pageable pageable = (Pageable) PageRequest.of(pageno,5, Sort.by("name").ascending());
             return new ResponseEntity<>(productrepository.findBycategory(category, pageable), HttpStatus.OK);
         }catch (Exception e){
             e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            throw new SomethingWentWrongException("Something Went Wrong. Try Again Later..");
         }
     }
 
 
-    public ResponseEntity<Page<List<product>>> searchproductsbyname(String searchterm,  Integer pageno) {
+    public ResponseEntity<Page<List<product>>> searchproductsbyname(String searchterm,  Integer pageno) throws SomethingWentWrongException {
         try{
             Pageable pageable = (Pageable) PageRequest.of(pageno,5, Sort.by("name"));
             return new ResponseEntity<>(productrepository.findByNameContainingIgnoreCaseOrBrandContainingIgnoreCase(searchterm, searchterm, pageable), HttpStatus.OK);
         }catch (Exception e){
             e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            throw new SomethingWentWrongException("Something Went Wrong. Try Again Later..");
         }
     }
 
-    public ResponseEntity<Page<List<product>>> getalltheproducts(Integer pageno) {
+    public ResponseEntity<Page<List<product>>> getalltheproducts(Integer pageno) throws SomethingWentWrongException {
         try{
             Pageable pageable = (Pageable) PageRequest.of(pageno,5, Sort.by("name"));
             return new ResponseEntity<>(productrepository.getalltheproducts(pageno, pageable), HttpStatus.OK);
         }catch (Exception e){
             e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            throw new SomethingWentWrongException("Something Went Wrong. Try Again Later..");
         }
     }
 }

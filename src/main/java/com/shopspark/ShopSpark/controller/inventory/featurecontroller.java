@@ -1,6 +1,8 @@
 package com.shopspark.ShopSpark.controller.inventory;
 
 import com.shopspark.ShopSpark.entity.inventory.feature;
+import com.shopspark.ShopSpark.exceptions.InvalidInputFormat;
+import com.shopspark.ShopSpark.exceptions.SomethingWentWrongException;
 import com.shopspark.ShopSpark.service.inventory.featureservice;
 import jakarta.validation.Valid;
 import lombok.extern.java.Log;
@@ -28,23 +30,24 @@ public class featurecontroller {
     @Autowired
     featureservice featureservice;
     @GetMapping("getall")
-    public ResponseEntity<List<feature>> listllfeatures(){
+    public ResponseEntity<List<feature>> listllfeatures() throws SomethingWentWrongException {
         return featureservice.listllfeatures();
     }
     @GetMapping("id/{id}")
-    public ResponseEntity<Optional<feature>> getfeaturebyid(@PathVariable("id") Integer id){
+    public ResponseEntity<Optional<feature>> getfeaturebyid(@PathVariable("id") Integer id) throws SomethingWentWrongException {
         return featureservice.getfeaturebyid(id);
     }
     @PostMapping("add")
-    public ResponseEntity<feature> addfeature(@Valid @RequestBody feature feature, Errors errors){
+    public ResponseEntity<feature> addfeature(@Valid @RequestBody feature feature, Errors errors) throws InvalidInputFormat, SomethingWentWrongException {
         if(errors.hasErrors()){
-            for(ObjectError obj : errors.getAllErrors())log.error(obj.getDefaultMessage());
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            StringBuilder sb = new StringBuilder("The following Errors Occurred:");
+            for(ObjectError obj : errors.getAllErrors()){log.error(obj.getDefaultMessage());sb.append(obj.getDefaultMessage());sb.append(System.getProperty("line.separator"));}
+            throw new InvalidInputFormat(sb.toString());
         }
         return featureservice.addfeature(feature);
     }
     @GetMapping("productid/{productid}")
-    public ResponseEntity<List<feature>> getfeaturesbyproductid(@PathVariable("productid") Integer productid){
+    public ResponseEntity<List<feature>> getfeaturesbyproductid(@PathVariable("productid") Integer productid) throws SomethingWentWrongException {
         return featureservice.getfeaturesbyproductid(productid);
     }
 }

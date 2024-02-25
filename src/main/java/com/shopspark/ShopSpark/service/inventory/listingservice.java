@@ -1,6 +1,7 @@
 package com.shopspark.ShopSpark.service.inventory;
 
 import com.shopspark.ShopSpark.entity.inventory.listing;
+import com.shopspark.ShopSpark.exceptions.SomethingWentWrongException;
 import com.shopspark.ShopSpark.repository.inventory.listingrepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,28 +21,28 @@ public class listingservice {
 
     @Autowired
     listingrepository listingrepository;
-    public ResponseEntity<Page<List<listing>>> getallistings(Integer pageno) {
+    public ResponseEntity<Page<List<listing>>> getallistings(Integer pageno) throws SomethingWentWrongException {
         try{
             Pageable pageable = (Pageable) PageRequest.of(pageno,5,
                     Sort.by("price").ascending().and(Sort.by("avl_qty").descending()));
             return new ResponseEntity<>(listingrepository.getallistings(pageno, pageable), HttpStatus.OK);
         }catch (Exception e){
             e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            throw new SomethingWentWrongException("Something Went Wrong. Try Again Later..");
         }
     }
 
-    public ResponseEntity<Optional<listing>> getlistingbyid(Integer id) {
+    public ResponseEntity<Optional<listing>> getlistingbyid(Integer id) throws SomethingWentWrongException {
         try{
             Optional<listing> op = listingrepository.findById(id);
             return new ResponseEntity<>(op, HttpStatus.OK);
         }catch (Exception e){
             e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            throw new SomethingWentWrongException("Something Went Wrong. Try Again Later..");
         }
     }
 
-    public ResponseEntity<listing> addlisting(listing listing) {
+    public ResponseEntity<listing> addlisting(listing listing) throws SomethingWentWrongException {
         try{
             listing.setCreatedAt(LocalDateTime.now());
             listing.setCreatedBy("dummy");
@@ -51,29 +52,29 @@ public class listingservice {
             return new ResponseEntity<>(listing, HttpStatus.CREATED);
         }catch (Exception e){
             e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            throw new SomethingWentWrongException("Something Went Wrong. Try Again Later..");
         }
     }
 
-    public ResponseEntity<Page<List<listing>>> fetchListingsByProductId(Integer id, Integer pageno) {
+    public ResponseEntity<Page<List<listing>>> fetchListingsByProductId(Integer id, Integer pageno) throws SomethingWentWrongException {
         try{
             Pageable pageable = (Pageable) PageRequest.of(pageno,5,
                     Sort.by("price").ascending().and(Sort.by("avl_qty").descending()));
             return new ResponseEntity<>(listingrepository.findByproductId(id, pageable), HttpStatus.OK);
         }catch (Exception e){
             e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            throw new SomethingWentWrongException("Something Went Wrong. Try Again Later..");
         }
     }
 
-    public ResponseEntity<Page<List<listing>>> fetchlistingsbysellerName(String sellerName, Integer pageno) {
+    public ResponseEntity<Page<List<listing>>> fetchlistingsbysellerName(String sellerName, Integer pageno) throws SomethingWentWrongException {
         try{
             Pageable pageable = (Pageable) PageRequest.of(pageno,5,
                     Sort.by("price").ascending().and(Sort.by("avl_qty").descending()));
             return new ResponseEntity<>(listingrepository.findBySellerName(sellerName, pageable), HttpStatus.OK);
         }catch (Exception e){
             e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            throw new SomethingWentWrongException("Something Went Wrong. Try Again Later..");
         }
     }
 }
