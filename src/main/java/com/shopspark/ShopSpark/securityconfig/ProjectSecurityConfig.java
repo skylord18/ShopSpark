@@ -20,17 +20,18 @@ public class ProjectSecurityConfig {
                 .requestMatchers("*").permitAll()
                 .anyRequest().permitAll()
                 .and().formLogin()
+                .and().logout().permitAll().invalidateHttpSession(true).permitAll()
                 .and().httpBasic();
         return http.build();
     }
-    @Bean
-    public InMemoryUserDetailsManager inMemoryUserDetailsManager(){
-        UserDetails admin = User.withDefaultPasswordEncoder()
-                .username("admin").password("admin").roles("ADMIN", "SELLER", "USER").build();
-        UserDetails seller = User.withDefaultPasswordEncoder()
-                .username("seller").password("seller").roles("SELLER", "USER").build();
-        UserDetails buyer = User.withDefaultPasswordEncoder()
-                .username("buyer").password("buyer").roles("USER").build();
-        return new InMemoryUserDetailsManager(admin, seller, buyer);
-    }
+//    @Bean
+//    public InMemoryUserDetailsManager inMemoryUserDetailsManager(){
+//        UserDetails admin = User.withDefaultPasswordEncoder()
+//                .username("admin").password("admin").roles("ADMIN").build();
+//        UserDetails seller = User.withDefaultPasswordEncoder()
+//                .username("seller").password("seller").roles("SELLER").build();
+//        UserDetails buyer = User.withDefaultPasswordEncoder()
+//                .username("buyer").password("buyer").roles("USER").build();
+//        return new InMemoryUserDetailsManager(admin, seller, buyer);
+//    }
 }

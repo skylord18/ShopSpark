@@ -1,7 +1,7 @@
 package com.shopspark.ShopSpark.entity.inventory;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.shopspark.ShopSpark.annotations.NoSpecialCharacters;
+import com.shopspark.ShopSpark.entity.baseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
@@ -13,7 +13,7 @@ import lombok.*;
 @Getter
 @Setter
 @ToString
-public class feature extends baseEntity{
+public class feature extends baseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

@@ -59,7 +59,7 @@ public class listingservice {
     public ResponseEntity<Page<List<listing>>> fetchListingsByProductId(Integer id, Integer pageno) throws SomethingWentWrongException {
         try{
             Pageable pageable = (Pageable) PageRequest.of(pageno,5,
-                    Sort.by("price").ascending().and(Sort.by("avl_qty").descending()));
+                    Sort.by("price").ascending().and(Sort.by("avlQty").descending()));
             return new ResponseEntity<>(listingrepository.findByproductId(id, pageable), HttpStatus.OK);
         }catch (Exception e){
             e.printStackTrace();
@@ -70,7 +70,7 @@ public class listingservice {
     public ResponseEntity<Page<List<listing>>> fetchlistingsbysellerName(String sellerName, Integer pageno) throws SomethingWentWrongException {
         try{
             Pageable pageable = (Pageable) PageRequest.of(pageno,5,
-                    Sort.by("price").ascending().and(Sort.by("avl_qty").descending()));
+                    Sort.by("price").ascending().and(Sort.by("avlQty").descending()));
             return new ResponseEntity<>(listingrepository.findBySellerName(sellerName, pageable), HttpStatus.OK);
         }catch (Exception e){
             e.printStackTrace();

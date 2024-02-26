@@ -1,11 +1,10 @@
 package com.shopspark.ShopSpark.entity.inventory;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.shopspark.ShopSpark.annotations.NoSpecialCharacters;
+import com.shopspark.ShopSpark.entity.baseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
-import org.springframework.format.annotation.NumberFormat;
 
 @Entity
 @Data
@@ -14,7 +13,7 @@ import org.springframework.format.annotation.NumberFormat;
 @Getter
 @Setter
 @ToString
-public class listing extends baseEntity{
+public class listing extends baseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

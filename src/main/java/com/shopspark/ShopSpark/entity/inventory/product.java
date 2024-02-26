@@ -1,6 +1,6 @@
 package com.shopspark.ShopSpark.entity.inventory;
 
-import com.shopspark.ShopSpark.annotations.NoSpecialCharacters;
+import com.shopspark.ShopSpark.entity.baseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
@@ -13,7 +13,7 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
-public class product extends baseEntity{
+public class product extends baseEntity {
     private enum Category {
         Electronics, Clothing, Shoes, Jewelry, Home,
         Kitchen, Books, Beauty, PersonalCare, Health,
