@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
@@ -40,7 +41,7 @@ public class productcontroller {
         return productservice.getproductbyid(id);
     }
     @PostMapping("add")
-    public ResponseEntity<product> addProduct(@Valid @RequestBody product product, Errors errors) throws Exception {
+    public ResponseEntity<product> addProduct(@Valid @RequestBody product product, Errors errors, Authentication authentication) throws Exception {
         if(errors.hasErrors()){
             StringBuilder sb  = new StringBuilder("The following Error(s) Occurred:");
             sb.append(System.getProperty("line.separator"));
@@ -51,7 +52,7 @@ public class productcontroller {
             }
             throw new InvalidInputFormat(sb.toString());
         }
-        return productservice.addProduct(product);
+        return productservice.addProduct(product, authentication);
     }
     @GetMapping({"category/{category}/{pageno}", "category/{category}/page/{pageno}"})
     public ResponseEntity<Page<List<product>>> getproductsbycategory(@PathVariable("category") String category, @PathVariable("pageno") Integer pageno) throws SomethingWentWrongException {

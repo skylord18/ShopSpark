@@ -14,7 +14,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
-
+import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,12 +22,15 @@ import java.util.List;
 public class usernamepasswordAuthProvider implements AuthenticationProvider {
     @Autowired
     personrepository personrepository;
+    @Autowired
+    PasswordEncoder passwordEncoder;
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String name = authentication.getName();
         String password = authentication.getCredentials().toString();
         person person = personrepository.findByEmail(name);
-        if(null!=person && person.getId()>0 && password.equals(person.getPassword())){
+        if(null!=person && person.getId()>0 &&
+                passwordEncoder.matches(password, person.getPassword())){
             return new UsernamePasswordAuthenticationToken(person.getEmail(), null,getGrantedAuthorities(person.getRoles()));
         }else {
             throw new BadCredentialsException("Invalid Credentials!");

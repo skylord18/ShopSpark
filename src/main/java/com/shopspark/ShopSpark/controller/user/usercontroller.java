@@ -4,7 +4,7 @@ import com.shopspark.ShopSpark.entity.user.person;
 import com.shopspark.ShopSpark.exceptions.EmailAlreadyExistsException;
 import com.shopspark.ShopSpark.exceptions.InvalidInputFormat;
 import com.shopspark.ShopSpark.exceptions.SomethingWentWrongException;
-import com.shopspark.ShopSpark.service.user.userservice;
+import com.shopspark.ShopSpark.service.user.personservice;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ import static org.hibernate.query.sqm.tree.SqmNode.log;
 @Slf4j
 public class usercontroller {
     @Autowired
-    userservice userservice;
+    personservice userservice;
     @PostMapping("add")
     public ResponseEntity<person> registerUser(@Valid @RequestBody person person, Errors errors) throws InvalidInputFormat, EmailAlreadyExistsException, SomethingWentWrongException {
         if(errors.hasErrors()){

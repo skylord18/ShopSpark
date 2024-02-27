@@ -10,6 +10,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import org.springframework.data.domain.Pageable;
@@ -42,12 +43,12 @@ public class productservice {
         }
     }
 
-    public ResponseEntity<product> addProduct(product product) throws SomethingWentWrongException {
+    public ResponseEntity<product> addProduct(product product, Authentication authentication) throws SomethingWentWrongException {
         try{
             product.setCreatedAt(LocalDateTime.now());
-            product.setCreatedBy("dummy");
+            product.setCreatedBy(authentication.getPrincipal().toString());
             product.setUpdatedAt(LocalDateTime.now());
-            product.setUpdatedBy("dummy");
+            product.setUpdatedBy(authentication.getPrincipal().toString());
             productrepository.save(product);
             return new ResponseEntity<>(product, HttpStatus.OK);
         }catch (Exception e){

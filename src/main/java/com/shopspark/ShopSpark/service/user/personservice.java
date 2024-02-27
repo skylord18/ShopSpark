@@ -9,17 +9,21 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import static org.hibernate.query.sqm.tree.SqmNode.log;
 
 @Service
 @Slf4j
-public class userservice {
+public class personservice {
     @Autowired
     personrepository personrepository;
     @Autowired
     rolesrepository rolesrepository;
+    @Autowired
+    PasswordEncoder PasswordEncoder;
     public ResponseEntity<person> registerUser(person person) throws EmailAlreadyExistsException, SomethingWentWrongException {
         String email = person.getEmail();
         System.out.println(person.toString());
@@ -27,6 +31,7 @@ public class userservice {
             log.error("This Email Already Exists, Please try with another Email.");
             throw new EmailAlreadyExistsException("This Email Already Exists, Please try with another Email.");
         }
+        person.setPassword(PasswordEncoder.encode(person.getPassword()));
         person.setRoles(rolesrepository.getByrolename("USER"));
         System.out.println(person.toString());
         try{
@@ -37,5 +42,4 @@ public class userservice {
             throw new SomethingWentWrongException("Something Went Wrong. Try Again Later..");
         }
     }
-
 }
