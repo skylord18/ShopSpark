@@ -6,6 +6,7 @@ import com.shopspark.ShopSpark.exceptions.InvalidInputFormat;
 import com.shopspark.ShopSpark.exceptions.SomethingWentWrongException;
 import com.shopspark.ShopSpark.service.inventory.productservice;
 import jakarta.validation.Valid;
+import jdk.jfr.Frequency;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -61,5 +62,24 @@ public class productcontroller {
     @GetMapping({"search/{searchterm}/page/{pageno}", "search/{searchterm}/{pageno}"})
     public ResponseEntity<Page<List<product>>> searchproductsbyname(@PathVariable("searchterm") String searchterm,@PathVariable("pageno") Integer pageno) throws SomethingWentWrongException {
         return productservice.searchproductsbyname(searchterm, pageno);
+    }
+    //Implement Update && Delete Product Accessible omnly to ADMIN
+    @PostMapping("update/{id}")
+    public ResponseEntity<product> updateProduct(@Valid @RequestBody product product, Errors errors, Authentication authentication, @PathVariable("id") Integer id) throws InvalidInputFormat, SomethingWentWrongException {
+        if(errors.hasErrors()){
+            StringBuilder sb  = new StringBuilder("The following Error(s) Occurred:");
+            sb.append(System.getProperty("line.separator"));
+            for(ObjectError obj : errors.getAllErrors()){
+                log.error(obj.getDefaultMessage());
+                sb.append(obj.getDefaultMessage());
+                sb.append(System.getProperty("line.separator"));
+            }
+            throw new InvalidInputFormat(sb.toString());
+        }
+        return productservice.updateProduct(product,id, authentication);
+    }
+    @DeleteMapping("delete/{id}")
+    public ResponseEntity<String> deleteproduct(@PathVariable("id") Integer id, Authentication authentication) throws SomethingWentWrongException {
+       return productservice.deleteProduct(id, authentication);
     }
 }

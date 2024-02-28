@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
@@ -38,16 +39,29 @@ public class featurecontroller {
         return featureservice.getfeaturebyid(id);
     }
     @PostMapping("add")
-    public ResponseEntity<feature> addfeature(@Valid @RequestBody feature feature, Errors errors) throws InvalidInputFormat, SomethingWentWrongException {
+    public ResponseEntity<feature> addfeature(@Valid @RequestBody feature feature, Errors errors, Authentication authentication) throws InvalidInputFormat, SomethingWentWrongException {
         if(errors.hasErrors()){
             StringBuilder sb = new StringBuilder("The following Errors Occurred:");
             for(ObjectError obj : errors.getAllErrors()){log.error(obj.getDefaultMessage());sb.append(obj.getDefaultMessage());sb.append(System.getProperty("line.separator"));}
             throw new InvalidInputFormat(sb.toString());
         }
-        return featureservice.addfeature(feature);
+        return featureservice.addfeature(feature, authentication);
     }
     @GetMapping("productid/{productid}")
     public ResponseEntity<List<feature>> getfeaturesbyproductid(@PathVariable("productid") Integer productid) throws SomethingWentWrongException {
         return featureservice.getfeaturesbyproductid(productid);
+    }
+    @PatchMapping("update/{id}")
+    public ResponseEntity<feature> updatefeature(@Valid @RequestBody feature feature, Authentication authentication, Errors errors,@PathVariable("id") Integer id) throws InvalidInputFormat, SomethingWentWrongException {
+        if(errors.hasErrors()){
+            StringBuilder sb = new StringBuilder("The following Errors Occurred:");
+            for(ObjectError obj : errors.getAllErrors()){log.error(obj.getDefaultMessage());sb.append(obj.getDefaultMessage());sb.append(System.getProperty("line.separator"));}
+            throw new InvalidInputFormat(sb.toString());
+        }
+        return featureservice.updatefeature(id, feature, authentication);
+    }
+    @DeleteMapping("delete/{id}")
+    public ResponseEntity<feature> deletefeaturebyid(@PathVariable("id") Integer id) throws SomethingWentWrongException {
+        return featureservice.deletefeaturebyid(id);
     }
 }

@@ -1,6 +1,7 @@
 package com.shopspark.ShopSpark.service.inventory;
 
 import com.shopspark.ShopSpark.entity.inventory.listing;
+import com.shopspark.ShopSpark.exceptions.InvalidInputFormat;
 import com.shopspark.ShopSpark.exceptions.SomethingWentWrongException;
 import com.shopspark.ShopSpark.repository.inventory.listingrepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -42,13 +44,15 @@ public class listingservice {
         }
     }
 
-    public ResponseEntity<listing> addlisting(listing listing) throws SomethingWentWrongException {
+    public ResponseEntity<listing> addlisting(listing listing, Authentication authentication, Integer productId) throws SomethingWentWrongException {
         try{
             listing.setCreatedAt(LocalDateTime.now());
-            listing.setCreatedBy("dummy");
+            listing.setCreatedBy(authentication.getPrincipal().toString());
             listing.setUpdatedAt(LocalDateTime.now());
-            listing.setUpdatedBy("dummy");
+            listing.setUpdatedBy(authentication.getPrincipal().toString());
             listingrepository.save(listing);
+            Integer listingId = listing.getId();
+            listingrepository.setProductid(listingId, productId);
             return new ResponseEntity<>(listing, HttpStatus.CREATED);
         }catch (Exception e){
             e.printStackTrace();
@@ -75,6 +79,37 @@ public class listingservice {
         }catch (Exception e){
             e.printStackTrace();
             throw new SomethingWentWrongException("Something Went Wrong. Try Again Later..");
+        }
+    }
+
+    public ResponseEntity<List<listing>> getmylistings(Authentication authentication) throws SomethingWentWrongException {
+        try{
+            String email = authentication.getName().toString();
+            return new ResponseEntity<>(listingrepository.findByCreatedBy(email),HttpStatus.OK);
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new SomethingWentWrongException("Something Went Wrong. Try Again Later..");
+        }
+    }
+
+    public ResponseEntity<listing> modifylisting(Authentication authentication, Integer id, listing listing) throws InvalidInputFormat, SomethingWentWrongException {
+        Optional<listing> Listingfromrepo = listingrepository.findById(id);
+        if(Listingfromrepo.isEmpty())throw new InvalidInputFormat("Listing with the supplied ID does not exist.");
+        listing Listing = Listingfromrepo.orElse(null);
+        String createdBy = Listing.getCreatedBy();
+        if(createdBy.equals(authentication.getPrincipal().toString())){
+            Integer prod_id = listingrepository.getProdId(id);
+            Listing.setSellerName(listing.getSellerName());
+            Listing.setPrice(listing.getPrice());
+            Listing.setAvlQty(listing.getAvlQty());
+            Listing.setIsActive(listing.getIsActive());
+            Listing.setUpdatedAt(LocalDateTime.now());
+            Listing.setUpdatedBy(authentication.getPrincipal().toString());
+            listingrepository.save(Listing);
+            listingrepository.setProductid(id, prod_id);
+            return new ResponseEntity<>(listing, HttpStatus.OK);
+        }else{
+            throw new SomethingWentWrongException("You have not Created This Listing...");
         }
     }
 }

@@ -1,21 +1,33 @@
-package com.shopspark.ShopSpark.entity.user;
+package com.shopspark.ShopSpark.entity.order;
 
 import com.shopspark.ShopSpark.entity.baseEntity;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.Data;
+import lombok.*;
 
-@Data
 @Entity
-public class address extends baseEntity {
+@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
+public class order extends baseEntity {
+    public enum orderStatus{
+        Received, Processing, Shipped, OutForDelivery, Delivered
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    private Integer productId;
+    private Integer quantity;
+    @Enumerated(EnumType.STRING)
+    private String orderStatus;
+    private Integer shipping;
+    private Integer grandTotal;
+
     @NotBlank(message = "Address 1 Cannot be Blank")
     @Size(min = 5, message = "Address 1 Cannot be less than 5 characters")
     private String address1;
@@ -32,5 +44,6 @@ public class address extends baseEntity {
     @Size(min = 5, message = "Zipcode Cannot be less than 5 Digits")
     @Pattern(regexp = "(ˆ$|[0-9]{5})", message = "Zipcode Cannot be less than 5 Digits")
     private String zipcode;
+    private String sellerDetails;
 
 }

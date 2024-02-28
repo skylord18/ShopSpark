@@ -14,9 +14,7 @@ import java.util.List;
 public interface productrepository extends JpaRepository<product, Integer> {
     @Query(value = "SELECT * FROM product", nativeQuery = true)
     Page<List<product>> getalltheproducts(Integer pageno, Pageable pageable);
-
     Page<List<product>> findByNameContainingIgnoreCaseOrBrandContainingIgnoreCase(String searchterm, String searchterm1, Pageable pageable);
-
     Page<List<product>> findBycategory(String category, Pageable pageable);
 
 }

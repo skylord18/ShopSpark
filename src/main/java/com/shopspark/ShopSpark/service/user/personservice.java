@@ -13,6 +13,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 import static org.hibernate.query.sqm.tree.SqmNode.log;
 
 @Service
@@ -33,6 +35,10 @@ public class personservice {
         }
         person.setPassword(PasswordEncoder.encode(person.getPassword()));
         person.setRoles(rolesrepository.getByrolename("USER"));
+        person.setCreatedAt(LocalDateTime.now());
+        person.setCreatedBy(person.getEmail());
+        person.setUpdatedAt(LocalDateTime.now());
+        person.setUpdatedBy(person.getEmail());
         System.out.println(person.toString());
         try{
             personrepository.save(person);
